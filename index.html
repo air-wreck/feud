@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Family Feud</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  .team {
+    display: inline-block;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid black;
+    user-select: none;
+  }
+  .ans {
+    width: 200px;
+    height: 100px;
+    background-color: #B71C1C;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 10px;
+  }
+  .ans-text {
+    display: none;
+    font-family: Roboto;
+    font-weight: 100;
+    color: white;
+  }
+  #next {
+    background-color: #E57373;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+  }
+  #next:focus {
+    outline: none;
+  }
+  #question-text {
+    background-color: #FFEBEE;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid black;
+  }
+  #win {
+    width: 600px;
+    height: 600px;
+    background-color: rgba(255, 235, 238, 0.9);
+    border-radius: 5px;
+    border: 1px solid black;
+    z-index: 10;
+    position: absolute;
+    left: calc(50% - 300px);
+    top: calc(50% - 300px);
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+    font-family: Roboto;
+    font-weight: 100;
+  }
+</style>
+<script type="text/javascript">
+  const NUMS = [...Array(100).keys()]; // for convenience
+
+  const N_ANS = 8; // number of answers per round
+  var round = 1; // current round
+  var scores = {
+    "1": 0,
+    "2": 0
+  }
+
+  const texts = {
+    "1": {
+      question: "What is the best color of the rainbow?",
+      ans: {
+        "1": "RED",
+        "2": "ORANGE",
+        "3": "YELLOW",
+        "4": "GREEN",
+        "5": "BLUE",
+        "6": "INDIGO",
+        "7": "VIOLET",
+        "8": "VIOLENT"
+      }
+    },
+    "2": {
+      question: "You sit down for a dinner at your neighbors'. What is on the table?",
+      ans: {
+        "1": "RICE",
+        "2": "DUMPLINGS",
+        "3": "RED BEAN SOUP",
+        "4": "BEEF NOODLE SOUP",
+        "5": "PEKING ROAST DUCK",
+        "6": "CHICKEN TENDIES",
+        "7": "BOTTLE OF KETCHUP",
+        "8": "CHOPSTICKS"
+      }
+    },
+    "3": {
+      question: "Who is the greatest person to have ever lived?",
+      ans: {
+        "1": "JESUS",
+        "2": "MAO TSE-TUNG",
+        "3": "CHAING KAI-SHEK",
+        "4": "ALEXANDER THE GREAT",
+        "5": "GAIUS JULIUS CAESAR",
+        "6": "ADITHYA PARAMASIVAM",
+        "7": "ADITIE PARAMS",
+        "8": "ADDIE PARAMETERS"
+      }
+    }
+  }
+
+  // set up next round
+  const next = () => {
+    round++;
+
+    if (round > Math.max(...Object.keys(texts))) {
+      // we are done with the game; show winner
+      let win = document.getElementById("win");
+      if (scores["1"] > scores["2"])
+        win.innerHTML = "Yay! Team 1 has vanquished its foe!";
+      else if (scores["1"] === scores["2"])
+        win.innerHTML = "Behold! The mighty contest is tied.";
+      else
+        win.innerHTML = "Aha! The second has triumphed mightily!";
+      win.style.display = "block";
+
+    } else {
+      // change question and answer texts
+      document.getElementById("question-text").innerHTML = texts[round].question;
+      NUMS.slice(1, N_ANS+1).forEach(n => {
+        let ans_text = document.getElementById("answer-text-" + n);
+        ans_text.innerHTML = texts[round].ans[n];
+        ans_text.style.display = "none";
+      });
+
+      // set round number text
+      document.getElementById("rd_no").innerHTML = round;
+    }
+  }
+
+  // init on page load
+  window.addEventListener("load", event => {
+    // setup answer divs
+    let container = document.getElementById("ans-container");
+    document.getElementById("question-text").innerHTML = texts[round].question;
+    NUMS.slice(1, N_ANS+1).forEach(n => {
+      let ans = document.createElement("div");
+      ans.id = "ans-" + n;
+      ans.className = "ans";
+      ans.style.display = "inline-block";
+      ans.innerHTML = `
+        <span style="color: white; font-family: Roboto;">
+          ${n} |
+        </span>
+        <span id="answer-text-${n}" class="ans-text">
+          ${texts[round].ans[n]}
+        </span>`;
+
+      ans.addEventListener("click", event => {
+        // ooh look, it's a closure!
+        let ans_text = document.getElementById("answer-text-" + n);
+        if (ans_text.style.display !== "inline")
+          ans_text.style.display = "inline";
+        else
+          ans_text.style.display = "none";
+      });
+
+      container.appendChild(ans);
+      container.appendChild(document.createElement("br")); // force newline
+    });
+
+    // set up click-based team scoring divs
+    NUMS.slice(1, 3).forEach(n => {
+      let score = document.getElementById("team-" + n);
+      score.addEventListener("click", event => {
+        scores[n] += 10;
+        score.innerHTML = scores[n];
+      });
+
+      document
+        .getElementById("team-label-" + n)
+        .addEventListener("click", event => {
+          if (scores[n] >= 10) {
+            scores[n] -= 10;
+            score.innerHTML = scores[n];
+          }
+        });
+    });
+  });
+</script>
+<body>
+<h1 style="width: 100%; text-align: center; background-color: #B71C1C; padding: 10px; font-family: 'Roboto'; font-weight: 100; color: white; box-sizing: border-box;">
+  Family Feud
+</h1>
+<div id="controls" style="margin: 0 auto; text-align: center; margin: 20px 0;">
+  <span id="team-label-1" style="font-family: Roboto; font-weight: 300;">Team 1 </span>
+  <div id="team-1" class="team">0</div>
+  <div id="team-2" class="team">0</div>
+  <span id="team-label-2" style="font-family: Roboto; font-weight: 300;"> Team 2</span>
+  <br><br>
+  <span id="rd_no">1</span>
+  <button onclick="next()" id="next">Next Round</button>
+  <br><br>
+  <span id="question-text"></span>
+</div>
+<div id="ans-container" style="column-count: 3; text-align: center;"></div>
+<h1 id="win"></h1>
+</body>
+</html>
