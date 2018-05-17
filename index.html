@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Family Feud</title>
+  <meta charset="UTF-8">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
 </head>
 <style>
@@ -18,7 +19,7 @@
   }
   .ans {
     width: 200px;
-    height: 100px;
+    height: 50px;
     background-color: #B71C1C;
     border: 1px solid black;
     border-radius: 5px;
@@ -31,13 +32,13 @@
     font-weight: 100;
     color: white;
   }
-  #next {
+  .button {
     background-color: #E57373;
     padding: 10px;
     border-radius: 5px;
     border: none;
   }
-  #next:focus {
+  .button:focus {
     outline: none;
   }
   #question-text {
@@ -66,7 +67,7 @@
 <script type="text/javascript">
   const NUMS = [...Array(100).keys()]; // for convenience
 
-  const N_ANS = 8; // number of answers per round
+  const N_ANS = 10; // number of answers per round
   var round = 1; // current round
   var scores = {
     "1": 0,
@@ -84,7 +85,9 @@
         "5": "BLUE",
         "6": "INDIGO",
         "7": "VIOLET",
-        "8": "VIOLENT"
+        "8": "VIOLENT",
+        "9": "azure",
+        "10": "purple"
       }
     },
     "2": {
@@ -97,7 +100,9 @@
         "5": "PEKING ROAST DUCK",
         "6": "CHICKEN TENDIES",
         "7": "BOTTLE OF KETCHUP",
-        "8": "CHOPSTICKS"
+        "8": "CHOPSTICKS",
+        "9": "brookdale pizza",
+        "10": "apples"
       }
     },
     "3": {
@@ -110,9 +115,32 @@
         "5": "GAIUS JULIUS CAESAR",
         "6": "ADITHYA PARAMASIVAM",
         "7": "ADITIE PARAMS",
-        "8": "ADDIE PARAMETERS"
+        "8": "ADDIE PARAMETERS",
+        "9": "a.p.",
+        "10": "AP®"
       }
     }
+  }
+
+  // close win window
+  const close = () => {
+    console.log("clicked");
+    document.getElementById("win").style.display = "none";
+  }
+
+  // display WRONG text
+  const wrong = () => {
+    // randomly choose a humiliating message
+    let win = document.getElementById("win");
+    let win_text = document.getElementById("win-text");
+    let msgs = [
+      "WRONG",
+      "totally incorrect",
+      "nope",
+      "why would you even think that?"
+    ];
+    win_text.innerHTML = msgs[Math.floor(Math.random() * msgs.length)];
+    win.style.display = "block";
   }
 
   // set up next round
@@ -122,12 +150,13 @@
     if (round > Math.max(...Object.keys(texts))) {
       // we are done with the game; show winner
       let win = document.getElementById("win");
+      let win_text = document.getElementById("win-text");
       if (scores["1"] > scores["2"])
-        win.innerHTML = "Yay! Team 1 has vanquished its foe!";
+        win_text.innerHTML = "Yay! Team 1 has vanquished its foe!";
       else if (scores["1"] === scores["2"])
-        win.innerHTML = "Behold! The mighty contest is tied.";
+        win_text.innerHTML = "Behold! The mighty contest is tied.";
       else
-        win.innerHTML = "Aha! The second has triumphed mightily!";
+        win_text.innerHTML = "Aha! The second has triumphed mightily!";
       win.style.display = "block";
 
     } else {
@@ -192,6 +221,11 @@
           }
         });
     });
+
+    // button onclick not working for some reason?
+    document.getElementById("button-close").addEventListener("click", event => {
+      close();
+    })
   });
 </script>
 <body>
@@ -205,11 +239,16 @@
   <span id="team-label-2" style="font-family: Roboto; font-weight: 300;"> Team 2</span>
   <br><br>
   <span id="rd_no">1</span>
-  <button onclick="next()" id="next">Next Round</button>
+  <button onclick="next()" class="button">Next Round</button>
+  <button onclick="wrong()" class="button">Wrong</button>
   <br><br>
   <span id="question-text"></span>
 </div>
-<div id="ans-container" style="column-count: 3; text-align: center;"></div>
-<h1 id="win"></h1>
+<div id="ans-container" style="column-count: 2; text-align: center; width: 700px; margin: 0 auto;"></div>
+<h1 id="win">
+  <span id="win-text"></span>
+  <br>
+  <button id="button-close" class="button">Close</button>
+</h1>
 </body>
 </html>
