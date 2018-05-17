@@ -76,52 +76,112 @@
     "1": 0,
     "2": 0
   }
-  var active_team = "1";
+  var active_team = "0";
 
   const texts = {
     "1": {
-      question: "What is the best color of the rainbow?",
+      question: "WARM UP: Who is the greatest person to have ever lived?",
       ans: {
-        "1": "RED",
-        "2": "ORANGE",
-        "3": "YELLOW",
-        "4": "GREEN",
-        "5": "BLUE",
-        "6": "INDIGO",
-        "7": "VIOLET",
-        "8": "VIOLENT",
-        "9": "azure",
-        "10": "purple"
+        "1": "Adithya Paramasivam",
+        "2": "Aditie Params",
+        "3": "Addie Parameters",
+        "4": "Ackley Parmesan",
+        "5": "Adlai Pelican",
+        "6": "Andy Pearson",
+        "7": "Add Par",
+        "8": "Ad P",
+        "9": "a.p.",
+        "10": "AP®"
       }
     },
     "2": {
-      question: "You sit down for a dinner at your neighbors'. What is on the table?",
+      question: "What are rules about Chinese dining?",
       ans: {
-        "1": "RICE",
-        "2": "DUMPLINGS",
-        "3": "RED BEAN SOUP",
-        "4": "BEEF NOODLE SOUP",
-        "5": "PEKING ROAST DUCK",
-        "6": "CHICKEN TENDIES",
-        "7": "BOTTLE OF KETCHUP",
-        "8": "CHOPSTICKS",
-        "9": "brookdale pizza",
-        "10": "apples"
+        "1": "Eat at a round table",
+        "2": "Only eat after the host eats",
+        "3": "Place dishes in the center of the table",
+        "4": "Keep pace with others",
+        "5": "Eat with chopsticks (except soup)",
+        "6": "Host will always toast",
+        "7": "Do not eat all dishes completely",
+        "8": "Never pour drinks yourself",
+        "9": "Compliment the chef",
+        "10": "Eat seconds, thirds, etc."
       }
     },
     "3": {
-      question: "Who is the greatest person to have ever lived?",
+      question: "What are the do's and don't's of American eating?",
       ans: {
-        "1": "JESUS",
-        "2": "MAO TSE-TUNG",
-        "3": "CHAING KAI-SHEK",
-        "4": "ALEXANDER THE GREAT",
-        "5": "GAIUS JULIUS CAESAR",
-        "6": "ADITHYA PARAMASIVAM",
-        "7": "ADITIE PARAMS",
-        "8": "ADDIE PARAMETERS",
-        "9": "a.p.",
-        "10": "AP®"
+        "1": "Follow dress code",
+        "2": "Arrive 10 minutes early",
+        "3": "Bring the host a gift",
+        "4": "Sit after the host does",
+        "5": "Wait for the prayer/blessing",
+        "6": "Join in with the toast",
+        "7": "Leave after cofee/tea is served",
+        "8": "Eat a little bit of everything",
+        "9": "Place napkin in your lap",
+        "10": "Food is served and passed from the left"
+      }
+    },
+    "4": {
+      question: "You sit down for a dinner at your neighborhood Chinese family. What's on the table?",
+      ans: {
+        "1": "Rice",
+        "2": "Dumplings",
+        "3": "Beef noodle soup",
+        "4": "Chopsticks",
+        "5": "Green vegetables you can't pronounce",
+        "6": "Steamed fish",
+        "7": "Xiao long bao + vinegar",
+        "8": "Baozi",
+        "9": "I don't want to know",
+        "10": "Brookdale pizza"
+      }
+    },
+    "5": {
+      question: "You are designing a room in accordance with the traditional Chinese Feng Shui principles in mind. Where do you put the furniture related to your career?",
+      ans: {
+        "1": "N",
+        "2": "SE",
+        "3": "S",
+        "4": "NW",
+        "5": "E",
+        "6": "SW",
+        "7": "W",
+        "8": "NE",
+        "9": "Up",
+        "10": "Down"
+      }
+    },
+    "6": {
+      question: "What's a popular social media app?",
+      ans: {
+        "1": "Facebook",
+        "2": "Instagram",
+        "3": "Snapchat",
+        "4": "Twitter",
+        "5": "Google Hangouts",
+        "6": "WeChat",
+        "7": "Reddit",
+        "8": "Tumblr",
+        "9": "Pinterest",
+        "10": "Tin can phones"
+      }
+    },
+    "7": {
+      question: "How should a parent raise a successful child?",
+      ans: {
+        "1": "Do chores",
+        "2": "Teach social skills",
+        "3": "Have high expectations",
+        "4": "Have good education",
+        "5": "Teach them math",
+        "6": "Don't stress",
+        "7": "Value effort",
+        "8": "Be assertive",
+        "9": "Teach grit",
+        "10": "Play piano"
       }
     }
   }
@@ -201,10 +261,13 @@
         if (ans_text.style.display !== "inline") {
           ans_text.style.display = "inline";
 
-          // also add points
-          scores[active_team] += 11 - n;
-          document.getElementById("team-" + active_team).innerHTML
-            = scores[active_team]
+          // also add points, but not on the sample round
+          if (round !== 1
+            && ["1", "2"].includes(active_team)) {
+              scores[active_team] += 11 - n;
+              document.getElementById("team-" + active_team).innerHTML
+                = scores[active_team];
+          }
 
         } else {
           ans_text.style.display = "none";
@@ -219,16 +282,23 @@
     NUMS.slice(1, 3).forEach(n => {
       let score = document.getElementById("team-" + n);
       score.addEventListener("click", event => {
-        active_team = n.toString();
-        document.getElementById("team-" + (n === 1 ? 2 : 1)).className
-          = "team";
-        score.className = "team active-team";
+        if (score.className === "team active-team") {
+          // we are already active, now disable
+          active_team = "0";
+          score.className = "team";
+        } else {
+          // we are not yet active, now enable
+          active_team = n.toString();
+          document.getElementById("team-" + (n === 1 ? 2 : 1)).className
+            = "team";
+          score.className = "team active-team";
+        }
       });
 
       document
         .getElementById("team-label-" + n)
         .addEventListener("click", event => {
-          if (scores[n] >= 10) {
+          if (scores[n] > 0) {
             scores[n]--;
             score.innerHTML = scores[n];
           }
@@ -236,20 +306,31 @@
     });
 
     // button onclick not working for some reason?
-    document.getElementById("button-close").addEventListener("click", event => {
-      close();
-    })
+    document
+      .getElementById("button-close")
+      .addEventListener("click", event => {
+        close();
+      })
+
+    // hidden method for adding a point to active team
+    document.getElementById("header").addEventListener("click", event => {
+      if (["1", "2"].includes(active_team)) {
+        scores[active_team]++;
+        document.getElementById("team-" + active_team).innerHTML
+          = scores[active_team];
+      }
+    });
   });
 </script>
 <body>
-<h1 style="width: 100%; text-align: center; background-color: #B71C1C; padding: 10px; font-family: 'Roboto'; font-weight: 100; color: white; box-sizing: border-box;">
+<h1 id="header" style="width: 100%; text-align: center; background-color: #B71C1C; padding: 10px; font-family: 'Roboto'; font-weight: 100; color: white; box-sizing: border-box;">
   Family Feud
 </h1>
 <div id="controls" style="margin: 0 auto; text-align: center; margin: 20px 0;">
-  <span id="team-label-1" style="font-family: Roboto; font-weight: 300;">The Jongs </span>
-  <div id="team-1" class="team active-team">0</div>
+  <span id="team-label-1" style="font-family: Roboto; font-weight: 300; padding-left: 30px;">The Jongs </span>
+  <div id="team-1" class="team active">0</div>
   <div id="team-2" class="team">0</div>
-  <span id="team-label-2" style="font-family: Roboto; font-weight: 300;">  Schields</span>
+  <span id="team-label-2" style="font-family: Roboto; font-weight: 300;"> The Schields</span>
   <br><br>
   <span id="rd_no">1</span>
   <button onclick="next()" class="button">Next Round</button>
