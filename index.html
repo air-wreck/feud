@@ -63,6 +63,9 @@
     font-family: Roboto;
     font-weight: 100;
   }
+  .active-team {
+    background-color: #FFEBEE;
+  }
 </style>
 <script type="text/javascript">
   const NUMS = [...Array(100).keys()]; // for convenience
@@ -73,6 +76,7 @@
     "1": 0,
     "2": 0
   }
+  var active_team = "1";
 
   const texts = {
     "1": {
@@ -194,10 +198,17 @@
       ans.addEventListener("click", event => {
         // ooh look, it's a closure!
         let ans_text = document.getElementById("answer-text-" + n);
-        if (ans_text.style.display !== "inline")
+        if (ans_text.style.display !== "inline") {
           ans_text.style.display = "inline";
-        else
+
+          // also add points
+          scores[active_team] += 11 - n;
+          document.getElementById("team-" + active_team).innerHTML
+            = scores[active_team]
+
+        } else {
           ans_text.style.display = "none";
+        }
       });
 
       container.appendChild(ans);
@@ -208,15 +219,17 @@
     NUMS.slice(1, 3).forEach(n => {
       let score = document.getElementById("team-" + n);
       score.addEventListener("click", event => {
-        scores[n] += 10;
-        score.innerHTML = scores[n];
+        active_team = n.toString();
+        document.getElementById("team-" + (n === 1 ? 2 : 1)).className
+          = "team";
+        score.className = "team active-team";
       });
 
       document
         .getElementById("team-label-" + n)
         .addEventListener("click", event => {
           if (scores[n] >= 10) {
-            scores[n] -= 10;
+            scores[n]--;
             score.innerHTML = scores[n];
           }
         });
@@ -233,10 +246,10 @@
   Family Feud
 </h1>
 <div id="controls" style="margin: 0 auto; text-align: center; margin: 20px 0;">
-  <span id="team-label-1" style="font-family: Roboto; font-weight: 300;">Team 1 </span>
-  <div id="team-1" class="team">0</div>
+  <span id="team-label-1" style="font-family: Roboto; font-weight: 300;">The Jongs </span>
+  <div id="team-1" class="team active-team">0</div>
   <div id="team-2" class="team">0</div>
-  <span id="team-label-2" style="font-family: Roboto; font-weight: 300;"> Team 2</span>
+  <span id="team-label-2" style="font-family: Roboto; font-weight: 300;">  Schields</span>
   <br><br>
   <span id="rd_no">1</span>
   <button onclick="next()" class="button">Next Round</button>
